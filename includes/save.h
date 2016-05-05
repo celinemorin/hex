@@ -7,5 +7,6 @@
 void delete_save (void);
 void make_save (int X, int Y, State color);
 void load_save (Board plateau);
+void cancel_coup (Board plateau);
 
 #endif

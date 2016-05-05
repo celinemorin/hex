@@ -28,3 +28,10 @@ void load_save (Board plateau)
 		plateau[X - 1][Y - 1] = color;
 	fclose(file);
 }
+
+void cancel_coup (Board plateau)
+{
+	if (system("tail -r historique.txt | tail +2 | tail -r > historique.txt") == -1)
+		exit(1);
+	load_save(plateau);
+}
