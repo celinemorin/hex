@@ -31,7 +31,7 @@ void load_save (Board plateau)
 
 void cancel_coup (Board plateau)
 {
-	if (system("tail -r historique.txt | tail +2 | tail -r > historique.txt") == -1)
+	if (system("sed '$d' historique.txt > tmp.txt && rm historique.txt && mv tmp.txt historique.txtc") == -1)
 		exit(1);
 	load_save(plateau);
 }
