@@ -1,14 +1,4 @@
 #include "unionfind.h"
-#include <stdlib.h>
-#include <assert.h>
-
-typedef struct uf_node
-{
-	int ID;
-	struct uf_node *group;
-	struct uf_node *left;
-	struct uf_node *right;
-} uf_node;
 
 void destroy_unionfind_node (struct uf_node *to_delete)
 {
@@ -88,7 +78,7 @@ void insert_vertex (struct uf_node *root, struct uf_node *temp)
 	}
 }
 
-struct uf_node *uf_node_add (struct uf_node *root, int X, int Y)
+struct uf_node *uf_node_create (int X, int Y)
 {
 	struct uf_node *temp = malloc(sizeof(struct uf_node));
 	if (temp == NULL)
@@ -100,6 +90,12 @@ struct uf_node *uf_node_add (struct uf_node *root, int X, int Y)
 	temp->right = NULL;
 	temp->ID = get_ID(X, Y);
 	temp->group = temp;
+	return (temp);
+}
+
+struct uf_node *uf_node_add (struct uf_node *root, int X, int Y)
+{
+	struct uf_node *temp = uf_create_node(X, Y);
 	insert_vertex(root, temp);
 	return (temp);
 }

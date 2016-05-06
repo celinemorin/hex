@@ -2,12 +2,17 @@
 #define __UNIONFIND_H__
 
 #include <stdbool.h>
+#include <stdlib.h>
+#include <assert.h>
+
+typedef struct uf_node
+{
+	int ID;
+	struct uf_node *group;
+	struct uf_node *left;
+	struct uf_node *right;
+} uf_node;
 
 typedef struct unionfind *UnionFind;
-
-UnionFind uf_create(void);
-void uf_destroy(UnionFind * uf);
-GraphVertex uf_find (UnionFind uf, GraphVertex vertex);
-bool uf_union (UnionFind uf, GraphVertex vertex_a, GraphVertex vertex_b);
 
 #endif
