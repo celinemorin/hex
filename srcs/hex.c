@@ -1,5 +1,6 @@
 #include "hex.h"
 #include "save.h"
+#include "unionfind.h"
 
 void affichage (Board plateau)
 {
@@ -11,6 +12,14 @@ void affichage (Board plateau)
 			printf(" %d   ", plateau[i][j]);
 		printf("\n\n");
 	}
+}
+
+void free_plateau (Board plateau)
+{
+	int i;
+	for (i = 0 ; i < SIZE ; i++)
+		free(plateau[i]);
+	free(plateau);
 }
 
 Board initialisation_plateau (void)

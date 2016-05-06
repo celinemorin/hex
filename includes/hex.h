@@ -16,4 +16,7 @@ typedef struct node
 
 typedef struct node *Node;
 
+Board initialisation_plateau (void);
+void free_plateau (Board plateau);
+
 #endif

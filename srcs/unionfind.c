@@ -11,7 +11,6 @@ void destroy_unionfind_node (struct uf_node *to_delete)
 
 static struct uf_node *find_helper (struct uf_node *root, int ID)
 {
-	assert(uf != NULL);
 	struct uf_node *temp = root;
 	bool found = false;
 	while (temp != NULL && !found) 
@@ -28,7 +27,6 @@ static struct uf_node *find_helper (struct uf_node *root, int ID)
 
 static struct uf_node *find_node (struct uf_node *root, int ID)
 {
-	assert(uf != NULL);
 	struct uf_node *temp = find_helper(root, ID);
 	if (temp != NULL)
 	{
@@ -41,7 +39,7 @@ static struct uf_node *find_node (struct uf_node *root, int ID)
 	return (temp);
 }
 
-GraphVertex uf_find (struct uf_node *root, int ID)
+int uf_find (struct uf_node *root, int ID)
 {
 	struct uf_node *group_rep = find_node(root, ID);
 	if (group_rep != NULL)
@@ -95,16 +93,15 @@ struct uf_node *uf_node_create (int X, int Y)
 
 struct uf_node *uf_node_add (struct uf_node *root, int X, int Y)
 {
-	struct uf_node *temp = uf_create_node(X, Y);
+	struct uf_node *temp = uf_node_create(X, Y);
 	insert_vertex(root, temp);
 	return (temp);
 }
 
 bool uf_union (struct uf_node *root, int ID1, int ID2)
 {
-	assert(uf != NULL);
-	struct uf_node *a = find_node(uf, ID1);
-	struct uf_node *b = find_node(uf, ID2);
+	struct uf_node *a = find_node(root, ID1);
+	struct uf_node *b = find_node(root, ID2);
 	bool same_group = false;
 	if (a->group != b->group)
 	{

@@ -20,6 +20,8 @@ void load_save (Board plateau)
 	int X, Y;
 	State color;
 	FILE *file = fopen("historique.txt", "r");
+	free_plateau(plateau);
+	plateau = initialisation_plateau();
 	if (file == NULL)
 		exit(1);
 	while (fscanf(file, "%d %d %d\n", &color, &X, &Y) == 3)
