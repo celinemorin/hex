@@ -14,8 +14,7 @@ typedef struct uf_node
 	struct uf_node *right;
 } uf_node;
 
-void destroy_unionfind_node (struct uf_node *to_delete);
-static struct uf_node *find_node (struct uf_node *root, int ID);
+//static struct uf_node *find_node (struct uf_node *root, int ID);
 int get_ID (int X, int Y);
 struct uf_node *uf_node_create (int X, int Y);
 int uf_find (struct uf_node *root, int ID);

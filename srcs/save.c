@@ -15,23 +15,23 @@ void make_save (int X, int Y, State color)
 	fclose(file);
 }
 
-void load_save (Board plateau)
+void load_save (Infos infos)
 {
 	int X, Y;
 	State color;
 	FILE *file = fopen("historique.txt", "r");
-	free_plateau(plateau);
-	plateau = initialisation_plateau();
+	free_infos(infos);
+	infos = initialisation_infos();
 	if (file == NULL)
 		exit(1);
 	while (fscanf(file, "%d %d %d\n", &color, &X, &Y) == 3)
-		plateau[X - 1][Y - 1] = color;
+		infos->plateau[X - 1][Y - 1] = color;
 	fclose(file);
 }
 
-void cancel_coup (Board plateau)
+void cancel_coup (Infos infos)
 {
 	if (system("sed '$d' historique.txt > tmp.txt && rm historique.txt && mv tmp.txt historique.txt") == -1)
 		exit(1);
-	load_save(plateau);
+	load_save(infos);
 }

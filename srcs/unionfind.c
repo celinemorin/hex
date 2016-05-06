@@ -1,14 +1,5 @@
 #include "unionfind.h"
 
-void destroy_unionfind_node (struct uf_node *to_delete)
-{
-	if (to_delete == NULL)
-		return;
-	destroy_unionfind_node(to_delete->left);
-	destroy_unionfind_node(to_delete->right);
-	free(to_delete);
-}
-
 static struct uf_node *find_helper (struct uf_node *root, int ID)
 {
 	struct uf_node *temp = root;

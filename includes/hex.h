@@ -2,21 +2,23 @@
 #define __HEX_H__
 
 #include <stdlib.h>
+#include <stdbool.h>
+#include "unionfind.h"
 
 #define SIZE 11
 
 typedef enum state {empty, red, blue} State;
 typedef State **Board;
 
-typedef struct node
+typedef struct infos
 {
-	int X, Y;
-	struct node *next;
-} node;
+	Board plateau;
+	struct uf_node *root;
+} infos;
 
-typedef struct node *Node;
+typedef struct infos *Infos;
 
-Board initialisation_plateau (void);
-void free_plateau (Board plateau);
+void free_infos (Infos infos);
+Infos initialisation_infos (void);
 
 #endif
