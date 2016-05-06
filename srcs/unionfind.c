@@ -4,28 +4,11 @@
 
 typedef struct uf_node
 {
-	GraphVertex val;
+	int ID;
 	struct uf_node *group;
 	struct uf_node *left;
 	struct uf_node *right;
-} uf;
-
-typedef struct unionfind
-{
-	struct uf_node *root;
-} unionfind;
-
-UnionFind uf_create (void)
-{
-	UnionFind new_unionfind = malloc(sizeof(struct unionfind));
-	if (new_unionfind == NULL)
-	{
-		fprintf(stderr, "malloc in unionfind.c");
-		exit(1);
-	}
-	new_unionfind->root = NULL;
-	return (new_unionfind);
-}
+} uf_node;
 
 void destroy_unionfind_node (struct uf_node *to_delete)
 {
@@ -36,26 +19,16 @@ void destroy_unionfind_node (struct uf_node *to_delete)
 	free(to_delete);
 }
 
-void uf_destroy (UnionFind *uf)
+static struct uf_node *find_helper (struct uf_node *root, int ID)
 {
 	assert(uf != NULL);
-	if (*uf == NULL)
-		return;
-	destroy_unionfind_node((*uf)->root);
-	free(*uf);
-	*uf = NULL;
-}
-
-static struct uf_node *find_helper (UnionFind uf, GraphVertex key)
-{
-	assert(uf != NULL);
-	struct uf_node *temp = uf->root;
+	struct uf_node *temp = root;
 	bool found = false;
 	while (temp != NULL && !found) 
 	{
-		if (temp->val == key)
+		if (temp->ID == ID)
 			found = true;
-		else if (temp->val > key)
+		else if (temp->ID > ID)
 			temp = temp->left;
 		else
 			temp = temp->right;
@@ -63,10 +36,10 @@ static struct uf_node *find_helper (UnionFind uf, GraphVertex key)
 	return (temp);
 }
 
-static struct uf_node *find_node (UnionFind uf, GraphVertex key)
+static struct uf_node *find_node (struct uf_node *root, int ID)
 {
 	assert(uf != NULL);
-	struct uf_node *temp = find_helper(uf, key);
+	struct uf_node *temp = find_helper(root, ID);
 	if (temp != NULL)
 	{
 		while (temp->group != temp)
@@ -78,32 +51,28 @@ static struct uf_node *find_node (UnionFind uf, GraphVertex key)
 	return (temp);
 }
 
-GraphVertex uf_find (UnionFind uf, GraphVertex vertex)
+GraphVertex uf_find (struct uf_node *root, int ID)
 {
-	struct uf_node *group_rep = find_node(uf, vertex);
+	struct uf_node *group_rep = find_node(root, ID);
 	if (group_rep != NULL)
-		vertex = group_rep->val;
-	return (vertex);
+		ID = group_rep->ID;
+	return (ID);
 }
 
-struct uf_node *uf_node_create (GraphVertex val)
+int get_ID (int X, int Y)
 {
-	struct uf_node *temp = malloc(sizeof(struct uf_node));
-	if (temp == NULL)
+	int i, j, ID = 0;
+	for (i = 0 ; i < X ; i++)
 	{
-		fprintf(stderr, "malloc in unionfind.c");
-		exit(1);
+		for (j = 0 ; j < Y ; j++)
+			ID++;
 	}
-	temp->left = NULL;
-	temp->right = NULL;
-	temp->val = val;
-	temp->group = temp;
-	return (temp);
+	return (ID);
 }
 
 void insert_vertex (struct uf_node *root, struct uf_node *temp)
 {
-	if (temp->val < root->val) 
+	if (temp->ID < root->ID) 
 	{
 		if (root->left == NULL)
 			root->left = temp;
@@ -119,33 +88,31 @@ void insert_vertex (struct uf_node *root, struct uf_node *temp)
 	}
 }
 
-bool uf_union (UnionFind uf, GraphVertex vertex_a, GraphVertex vertex_b)
+struct uf_node *uf_node_add (struct uf_node *root, int X, int Y)
+{
+	struct uf_node *temp = malloc(sizeof(struct uf_node));
+	if (temp == NULL)
+	{
+		fprintf(stderr, "malloc in unionfind.c");
+		exit(1);
+	}
+	temp->left = NULL;
+	temp->right = NULL;
+	temp->ID = get_ID(X, Y);
+	temp->group = temp;
+	insert_vertex(root, temp);
+	return (temp);
+}
+
+bool uf_union (struct uf_node *root, int ID1, int ID2)
 {
 	assert(uf != NULL);
-	struct uf_node *a = find_helper(uf, vertex_a);
-	struct uf_node *b = find_helper(uf, vertex_b);
+	struct uf_node *a = find_node(uf, ID1);
+	struct uf_node *b = find_node(uf, ID2);
 	bool same_group = false;
-	if (a == NULL)
-	{
-		a = uf_node_create(vertex_a);
-		if (uf->root == NULL)
-			uf->root = a;
-		else
-			insert_vertex(uf->root, a);
-	}
-	if (b == NULL)
-	{
-		b = uf_node_create(vertex_b);
-		if (uf->root == NULL)
-			uf->root = b;
-		else
-			insert_vertex(uf->root, b);
-	}
-	a = find_node(uf, vertex_a);
-	b = find_node(uf, vertex_b);
 	if (a->group != b->group)
 	{
-		if (a->val > b->val)
+		if (a->ID > b->ID)
 			a->group = b->group;
 		else
 			b->group = a->group;
