@@ -2,10 +2,8 @@
 
 void delete_save (void)
 {
-	FILE *file = fopen("historique.txt", "w");
-	if (file == NULL)
+	if (remove("historique.txt") != 0)
 		exit(1);
-	fclose(file);
 }
 
 void make_save (int X, int Y, State color)
@@ -31,7 +29,7 @@ void load_save (Board plateau)
 
 void cancel_coup (Board plateau)
 {
-	if (system("sed '$d' historique.txt > tmp.txt && rm historique.txt && mv tmp.txt historique.txtc") == -1)
+	if (system("sed '$d' historique.txt > tmp.txt && rm historique.txt && mv tmp.txt historique.txt") == -1)
 		exit(1);
 	load_save(plateau);
 }
