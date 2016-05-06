@@ -42,13 +42,22 @@ Axe recuperationCellule(Axe position)
   if(posRes.y<0)
     posRes.y=posRes.y-25;
   
-  posRes.x=posRes.x/30;
-  posRes.y=posRes.y/25;
-  
-  printf("\n%d ; %d\n",posRes.x,posRes.y);
-  posRes.x=1;
+  posRes.x=(posRes.x/30)+1;
+  posRes.y=(posRes.y/25)+1;
+
   return posRes;
 }
+
+void placement_pion(SDL_Surface *ecran, Axe position, int couleur)
+{
+  position.x = (position.x * 30) + POSX + 43 + ((position.y - 1)*15);
+  position.y = (position.y * 25) + POSJEUY -1 ;
+  if(couleur == 1)
+    chargementUneImage(ecran,"Images/button-red22.png",position.x,position.y);
+  if(couleur == 2)
+    chargementUneImage(ecran,"Images/button-blue22.png",position.x,position.y);
+}
+
 
 
 
@@ -75,8 +84,9 @@ Axe attente_evenement_jeu(SDL_Surface *ecran)
 	  {   
 	  clic.x = evenement.motion.x;
 	  clic.y = evenement.motion.y;
-	  printf("X=%d Y=%d\n",clic.x,clic.y); // on récupère les coordonnées du clic
-	  recuperationCellule(clic);
+	  clic = recuperationCellule(clic);
+	  if((clic.x > 0) && (clic.x < 12) && (clic.y > 0) && (clic.y < 12))
+	    return clic;
 	  }
 	  break;
 	case SDL_KEYDOWN:
@@ -113,44 +123,16 @@ Axe attente_evenement_jeu(SDL_Surface *ecran)
   }
 }
 
-Axe creation_interface_jeu(int numMenu)
+void creation_interface_jeu(SDL_Surface *ecran,int numMenu)
 {
-  Uint32 initflags = SDL_INIT_VIDEO; 
-  SDL_Surface *ecran; 
-
-  Dimensions fenetre; // main window
-
-  fenetre.h = HAUTEUR; 
-  fenetre.w = LARGEUR;   
-  Uint8  video_bpp = 32; // 32 bits de couleur
-
-  Uint32 videoflags = SDL_HWSURFACE;  
-  SDL_WM_SetCaption("Jeu de Hex", NULL); 
-
-  /* Initialize the SDL library */
-  if ( SDL_Init(initflags) < 0 )
-  {
-    fprintf(stderr, "N'arrive pas a` initialiser la SDL : %s\n", SDL_GetError());
-    exit(1);
-  }
-
-  /* Set video mode */
-  ecran = SDL_SetVideoMode(fenetre.w, fenetre.h, video_bpp, videoflags); // surface principale
-  if (ecran == NULL)
-  {
-    fprintf(stderr, "N'arrive pas a` etablir mode video%dx%dx%d : %s\n", fenetre.w, fenetre.h, video_bpp, SDL_GetError());
-    SDL_Quit();
-    exit(2);
-  }
+  
 
   Uint32 grey = SDL_MapRGB(ecran->format,173,173,173); // c'est du gris
   SDL_FillRect(ecran,NULL,grey); // de la couleur dans le fond de la fenêtre principale
   
   initialisationImage(ecran,numMenu);
-  Axe res = attente_evenement_jeu(ecran);
 
 
   /* Free SDL library */
   SDL_FreeSurface(ecran);
-  return(res);
 }
