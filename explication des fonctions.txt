@@ -1,0 +1,29 @@
+Tout ce qu'il y a dans interface.c ça sert qu'a interface.c et interfaceJeu.c en gros
+
+Pour créer l'écran et le menu c'est projet.c jusqu'à la ligne 55 
+Donc cette partie c'est obligatoirement a mettre dans le main 
+J'ai pas trop compris pourquoi fallait vérifier l'écan et le SDL_init mais apparemment faut le faire...
+
+Après la ligne 55 soit le programme a retourner 2 (dans res) et la faut faire un chargement de la partie
+Soit il a retournée 5 et la ça lance une humain vs humain soit 6 et humain vs ia soit 7 et ça explose
+Le reste il le gère tout seul (retour/quitter/jouer)
+
+Après j'ai mis ça : 
+
+  if(res==5) // si le joueur a choisi humain vs humain
+  {
+    creation_interface_jeu(ecran,3); 
+    while(gagnant == false)
+    {
+      unClicValide = attente_evenement_jeu(ecran);
+      placement_pion(ecran,unClicValide,1);
+      unClicValide = attente_evenement_jeu(ecran);
+      placement_pion(ecran,unClicValide,2);
+      
+    }
+  }
+  
+  
+Donc création interface ça génère le tableau de base
+Puis tant que gagnant = false il joue (mais faut encore valider les coups)
+Donc en gros attente_evenement_jeu(ecran); ça revoie une valeur entre 1 et 11 et placement_pion(ecran,unClicValide,1); ça l'affiche
