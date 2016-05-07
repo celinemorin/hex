@@ -164,7 +164,9 @@ int main (int argc, char **argv)
 	add_pion(infos, 5, 11, blue);
 	make_save(5, 11, blue);
 	affichage(infos->plateau);
-	cancel_coup(infos);
+	free_infos(infos);
+	infos = cancel_coup(infos);
+	//load_save(infos);
 	affichage(infos->plateau);
 	if (end_of_game(infos, blue))
 		printf("OUIIIIII\n");
