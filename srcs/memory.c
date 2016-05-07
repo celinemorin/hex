@@ -14,6 +14,9 @@
 #include "unionfind.h"
 #include "error.h"
 
+/* 	rôle : initialiser le plateau de jeu.
+	retour : plateau initialisé. */
+
 Board initialisation_plateau (void)
 {
 	int i, j;
@@ -31,6 +34,11 @@ Board initialisation_plateau (void)
 	return (plateau);
 }
 
+/* 	rôle : créer une nouvelle node de position (X, Y).
+	int X : abscisse de la node.
+	int Y : ordonnée de la node.
+	retour : node initialisée. */
+
 struct uf_node *uf_node_create (int X, int Y)
 {
 	struct uf_node *temp = malloc(sizeof(struct uf_node));
@@ -43,6 +51,9 @@ struct uf_node *uf_node_create (int X, int Y)
 	return (temp);
 }
 
+/*	rôle : initialiser une structure de type Infos.
+	retour : la structure initialisée. */
+
 Infos initialisation_infos (void)
 {
 	Infos infos = malloc(sizeof(struct infos));
@@ -54,6 +65,9 @@ Infos initialisation_infos (void)
 	return (infos);
 }
 
+/* 	rôle : libération de la mémoire du plateau de jeu.
+	Board plateau : variable à free. */
+
 void free_plateau (Board plateau)
 {
 	int i;
@@ -61,6 +75,9 @@ void free_plateau (Board plateau)
 		free(plateau[i]);
 	free(plateau);
 }
+
+/*	rôle : libération de la mémoire d'une branche de nodes.
+	struct uf_node *to_delete : racine de la branche à supprimer. */
 
 void destroy_unionfind_node (struct uf_node *to_delete)
 {
@@ -70,6 +87,9 @@ void destroy_unionfind_node (struct uf_node *to_delete)
 	destroy_unionfind_node(to_delete->right);
 	free(to_delete);
 }
+
+/* 	rôle : libération de la mémoire d'une structure de type Infos.
+	Infos infos : la structure à supprimer. */
 
 void free_infos (Infos infos)
 {
