@@ -21,5 +21,7 @@ typedef struct infos *Infos;
 
 void free_infos (Infos infos);
 Infos initialisation_infos (void);
+bool add_pion (Infos infos, int X, int Y, State color);
+void destroy_unionfind_node (struct uf_node *to_delete);
 
 #endif

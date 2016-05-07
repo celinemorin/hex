@@ -19,16 +19,13 @@ void load_save (Infos infos)
 {
 	int X, Y;
 	State color;
+	Infos new_infos = initialisation_infos();
 	FILE *file = fopen("historique.txt", "r");
-	free_infos(infos);
-	infos = initialisation_infos();
 	if (file == NULL)
 		exit(1);
 	while (fscanf(file, "%d %d %d\n", &color, &X, &Y) == 3)
-	{
-		infos->plateau[X - 1][Y - 1] = color;
-		//add_pion
-	}
+		add_pion(new_infos, X, Y, color);
+	*infos = *new_infos;
 	fclose(file);
 }
 

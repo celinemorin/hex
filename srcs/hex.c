@@ -75,21 +75,26 @@ void add_adjacent (Infos infos, int X1, int Y1, int X2, int Y2, State color)
 	} 
 }
 
-void add_pion (Infos infos, int X, int Y, State color)
+bool add_pion (Infos infos, int X, int Y, State color)
 {
+	bool success = 1;
 	if (infos->plateau == NULL || infos->plateau[X - 1][Y - 1] != empty)
-		exit(1);
-	infos->plateau[X - 1][Y - 1] = color;
-	if (color == red)
-		uf_node_add(infos->red_root, X, Y);
-	else if (color == blue)
-		uf_node_add(infos->blue_root, X, Y);
-	add_adjacent(infos, X, Y, X, Y - 1, color);
-	add_adjacent(infos, X, Y, X + 1, Y - 1, color);
-	add_adjacent(infos, X, Y, X - 1, Y, color);
-	add_adjacent(infos, X, Y, X + 1, Y, color);
-	add_adjacent(infos, X, Y, X - 1, Y + 1, color);
-	add_adjacent(infos, X, Y, X, X + 1, color);
+		success = 0;
+	else
+	{
+		infos->plateau[X - 1][Y - 1] = color;
+		if (color == red)
+			uf_node_add(infos->red_root, X, Y);
+		else if (color == blue)
+			uf_node_add(infos->blue_root, X, Y);
+		add_adjacent(infos, X, Y, X, Y - 1, color);
+		add_adjacent(infos, X, Y, X + 1, Y - 1, color);
+		add_adjacent(infos, X, Y, X - 1, Y, color);
+		add_adjacent(infos, X, Y, X + 1, Y, color);
+		add_adjacent(infos, X, Y, X - 1, Y + 1, color);
+		add_adjacent(infos, X, Y, X, X + 1, color);
+	}
+	return (success);
 }
 
 bool end_of_game (Infos infos, State color)
@@ -137,18 +142,32 @@ int main (int argc, char **argv)
 {
 	Infos infos = initialisation_infos();
 	add_pion(infos, 5, 1, blue);
+	make_save(5, 1, blue);
 	add_pion(infos, 5, 2, blue);
+	make_save(5, 2, blue);	
     add_pion(infos, 5, 3, blue);
+	make_save(5, 3, blue);
 	add_pion(infos, 5, 4, blue);
+	make_save(5, 4, blue);
 	add_pion(infos, 5, 5, blue);
+	make_save(5, 5, blue);
 	add_pion(infos, 5, 6, blue);
+	make_save(5, 6, blue);
 	add_pion(infos, 5, 7, blue);
+	make_save(5, 7, blue);
 	add_pion(infos, 5, 8, blue);
+	make_save(5, 8, blue);
 	add_pion(infos, 5, 9, blue);
+	make_save(5, 9, blue);
 	add_pion(infos, 5, 10, blue);
+	make_save(5, 10, blue);
 	add_pion(infos, 5, 11, blue);
+	make_save(5, 11, blue);
+	affichage(infos->plateau);
+	cancel_coup(infos);
 	affichage(infos->plateau);
 	if (end_of_game(infos, blue))
 		printf("OUIIIIII\n");
+	free_infos(infos);
 	return (0);
 }
