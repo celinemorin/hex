@@ -42,6 +42,7 @@ Axe recuperationCellule(Axe position)
   if(posRes.y<0)
     posRes.y=posRes.y-25;
   
+  // On divise par 30 ou 25 et on ajoute 1 pour avoir des cases comprises entre 1 et 11
   posRes.x=(posRes.x/30)+1;
   posRes.y=(posRes.y/25)+1;
 
@@ -50,43 +51,113 @@ Axe recuperationCellule(Axe position)
 
 void placement_pion(SDL_Surface *ecran, Axe position, int couleur)
 {
-  position.x = (position.x * 30) + POSX + 43 + ((position.y - 1)*15);
-  position.y = (position.y * 25) + POSJEUY -1 ;
+  position.x = (position.x * 30) + POSX + 39 + ((position.y - 1)*15);
+  position.y = (position.y * 25) + POSJEUY -6 ;
+  if((couleur == 0) || (couleur == 1) || (couleur == 2))
+    chargementUneImage(ecran,"Images/HexaGris.png",position.x,position.y);
   if(couleur == 1)
+  {
+    position.x=position.x+4;
+    position.y=position.y+5;
     chargementUneImage(ecran,"Images/button-red22.png",position.x,position.y);
+  }
   if(couleur == 2)
+  {
+    position.x=position.x+4;
+    position.y=position.y+5;
     chargementUneImage(ecran,"Images/button-blue22.png",position.x,position.y);
+  }
+  if(couleur == 3)
+    chargementUneImage(ecran,"Images/HexaJaune.png",position.x,position.y);
+    
 }
 
+void affichageGeneral(SDL_Surface *ecran, Infos varInfo)
+{
+  int i,j;
+  Axe caseEnCours;
+  for(i=0;i<11;i++)
+  {
+    caseEnCours.x=i+1;
+    for(j=0;j<11;j++)
+    {
+      caseEnCours.y=j+1;
+      placement_pion(ecran,caseEnCours,varInfo->plateau[i][j]);
+    }
+  }
+}
+Axe allerSuivante(SDL_Surface *ecran, int joueur,Infos varInfo)
+{
+  
+  Axe casePrec;
+  
+ 
+  casePrec.x=1;
+  casePrec.y=1;
+  while(varInfo->plateau[casePrec.x-1][casePrec.y-1] !=0)
+  {
+    casePrec.x++;
+    if(casePrec.x >11)
+    {
+      casePrec.x=1;
+      casePrec.y++;
+    }
+  }
+  placement_pion(ecran,casePrec, joueur );
 
+  return casePrec;
+  
+}
 
-
-Axe attente_evenement_jeu(SDL_Surface *ecran)
+Axe attente_evenement_jeu(SDL_Surface *ecran, Infos varInfo, int joueur)
 {    
 
-  bool attente;
   SDL_Event evenement; 
-  Axe clic;
-
-  attente = true; 
+  Axe clic,position,casePrecedente;
+  casePrecedente.x=0;
+  casePrecedente.y=0;
   SDLKey key_pressed ;
-  while (attente)
+  while (1)
     {
     while ( SDL_PollEvent(&evenement))
     {
       switch (evenement.type)
       {
 	case SDL_MOUSEMOTION:
-	  //printf("Ça bouge\n"); // sans intérêt, c'est juste pour montrer
+	  position.x = evenement.motion.x;
+	  position.y = evenement.motion.y;
+	  if((position.x >270) && (position.x <440) && (position.y>535) && (position.y<570))
+	    chargementUneImage(ecran,"Images/Annuler4.png",50,500);
+	  else
+	    chargementUneImage(ecran,"Images/Annuler3.png",50,500);
+	  if((position.x >540) && (position.x <760) && (position.y>535) && (position.y<570))
+	    chargementUneImage(ecran,"Images/Historique4.png",350,505);
+	  else
+	    chargementUneImage(ecran,"Images/Historique3.png",350,505);
+	    
+	  position = recuperationCellule(position);
+	  if((position.x > 0) && (position.x < 12) && (position.y > 0) && (position.y < 12) && (varInfo->plateau[position.x-1][position.y-1] == 0))
+	  {
+	    placement_pion(ecran,casePrecedente,0);
+	    casePrecedente.x=position.x;
+	    casePrecedente.y=position.y;
+	    placement_pion(ecran,position, joueur );
+	  }
 	  break;
 	case SDL_MOUSEBUTTONDOWN:
 	  if (evenement.button.button == SDL_BUTTON_LEFT)
 	  {   
-	  clic.x = evenement.motion.x;
-	  clic.y = evenement.motion.y;
-	  clic = recuperationCellule(clic);
-	  if((clic.x > 0) && (clic.x < 12) && (clic.y > 0) && (clic.y < 12))
-	    return clic;
+	    clic.x = evenement.motion.x;
+	    clic.y = evenement.motion.y;
+	    if((clic.x >270) && (clic.x <440) && (clic.y>535) && (clic.y<570))
+	    {
+	      clic.x=-1;
+	      return clic;
+	    }
+	    //if((clic.x >540) && (clic.x <760) && (clic.y>535) && (clic.y<570))
+	    clic = recuperationCellule(clic);
+	    if((clic.x > 0) && (clic.x < 12) && (clic.y > 0) && (clic.y < 12))
+	      return clic;
 	  }
 	  break;
 	case SDL_KEYDOWN:
@@ -94,20 +165,76 @@ Axe attente_evenement_jeu(SDL_Surface *ecran)
 	  switch (key_pressed)
 	  {
 	    case SDLK_ESCAPE: /* Esc keypress quits the app... */
-	      attente = false;
+	      exit(0);
 	      break;
 	    case SDLK_LEFT:
-	      printf("left +1\n"); // par exemple
+	      if((casePrecedente.x ==0) &&(casePrecedente.y==0))
+		casePrecedente= allerSuivante(ecran,joueur,varInfo);
+	      else
+	      {
+		placement_pion(ecran,casePrecedente, 0 );
+		do
+		{
+		  casePrecedente.x--;
+		  if(casePrecedente.x <1)
+		    casePrecedente.x=11;
+		}while(varInfo->plateau[casePrecedente.x-1][casePrecedente.y-1] !=0);
+		placement_pion(ecran,casePrecedente, joueur );
+	      }
 	      break;
 	    case SDLK_RIGHT:
-	      printf("right +1\n"); 
+	      if((casePrecedente.x ==0) &&(casePrecedente.y==0))
+		casePrecedente= allerSuivante(ecran,joueur,varInfo);
+	      else
+	      {
+		placement_pion(ecran,casePrecedente, 0 );
+		do
+		{
+		  casePrecedente.x++;
+		  if(casePrecedente.x >11)
+		    casePrecedente.x=1;
+		}while(varInfo->plateau[casePrecedente.x-1][casePrecedente.y-1] !=0);
+		placement_pion(ecran,casePrecedente, joueur );
+	      }
 	      break;
 	    case SDLK_UP:
-	      printf("up +1\n");
+	      if((casePrecedente.x ==0) &&(casePrecedente.y==0))
+		casePrecedente= allerSuivante(ecran,joueur,varInfo);
+	      else
+	      {
+		placement_pion(ecran,casePrecedente, 0 );
+		do
+		{
+		  casePrecedente.y--;
+		  if(casePrecedente.y <1)
+		    casePrecedente.y=11;
+		}while(varInfo->plateau[casePrecedente.x-1][casePrecedente.y-1] !=0);
+		placement_pion(ecran,casePrecedente, joueur );
+	      }
 	      break;
 	    case SDLK_DOWN:
-	      printf("down +1\n");
+	      if((casePrecedente.x ==0) &&(casePrecedente.y==0))
+		casePrecedente= allerSuivante(ecran,joueur,varInfo);
+	      else
+	      {
+		placement_pion(ecran,casePrecedente, 0 );
+		do
+		{
+		  casePrecedente.y++;
+		  if(casePrecedente.y <1)
+		    casePrecedente.y=11;
+		}while(varInfo->plateau[casePrecedente.x-1][casePrecedente.y-1] !=0);
+		placement_pion(ecran,casePrecedente, joueur );
+	      }
 	      break;
+	    default:
+	      break;
+	    case SDLK_RETURN:
+	      if((casePrecedente.x!=0) &&(casePrecedente.y!=0))
+		return casePrecedente;
+	    case SDLK_KP_ENTER:
+	      if((casePrecedente.x!=0) &&(casePrecedente.y!=0))
+		return casePrecedente;
 	  }
 	  break;
 	case SDL_QUIT:
@@ -119,8 +246,9 @@ Axe attente_evenement_jeu(SDL_Surface *ecran)
     }
     // refresh screen
     // mettre ici tous les blit utiles s'il y a des changements dans les surfaces, board, nouveaux pions
-    SDL_Flip(ecran); //maj des surfaces pour affichage
+    SDL_Flip(ecran); 
   }
+  return clic;
 }
 
 void creation_interface_jeu(SDL_Surface *ecran,int numMenu)

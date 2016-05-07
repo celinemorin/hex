@@ -49,6 +49,8 @@ void initialisationImage(SDL_Surface *ecran, int numeroMenu)
   }
   else if(numeroMenu == 3)
   {
+    chargementUneImage(ecran,"Images/Annuler3.png",50,500);
+    chargementUneImage(ecran,"Images/Historique3.png",350,505);
     chargementUneImage(ecran,"Images/hex.png",POSX+50,POSJEUY);
   }
   
@@ -56,7 +58,46 @@ void initialisationImage(SDL_Surface *ecran, int numeroMenu)
   TTF_CloseFont(policeTexte);
 }
 
-
+void clavierPos(SDL_Surface *ecran,int posClavier,int numeroMenu)
+{
+  if(numeroMenu==1)
+  {
+    if(posClavier==1)
+      chargementUneImage(ecran,"Images/MenuJouer2.png",POSX,POSJOUERY);
+    else
+      chargementUneImage(ecran,"Images/MenuJouer1.png",POSX,POSJOUERY);
+    if(posClavier==2)
+      chargementUneImage(ecran,"Images/MenuChargement2.png",POSX,POSCHARGY);
+    else
+      chargementUneImage(ecran,"Images/MenuChargement1.png",POSX,POSCHARGY);
+    if(posClavier==3)
+      chargementUneImage(ecran,"Images/MenuQuitter2.png",POSX,POSQUITY);
+    else
+      chargementUneImage(ecran,"Images/MenuQuitter1.png",POSX,POSQUITY);
+  }
+  if(numeroMenu==2)
+  {
+    if(posClavier==1)
+      chargementUneImage(ecran,"Images/MenuHumainVsHumain2.png",POSX,POSHVHY);
+    else
+      chargementUneImage(ecran,"Images/MenuHumainVsHumain1.png",POSX,POSHVHY);
+    if(posClavier==2)
+      chargementUneImage(ecran,"Images/MenuHumainVsIA2.png",POSX,POSHV1Y);
+    else
+      chargementUneImage(ecran,"Images/MenuHumainVsIA1.png",POSX,POSHV1Y);
+    if(posClavier==3)
+      chargementUneImage(ecran,"Images/MenuHumainVsIA4.png",POSX,POSHV2Y);
+    else
+      chargementUneImage(ecran,"Images/MenuHumainVsIA3.png",POSX,POSHV2Y);
+    if(posClavier==4)
+      chargementUneImage(ecran,"Images/MenuRetour2.png",POSX,POSRETOURY);
+    else
+      chargementUneImage(ecran,"Images/MenuRetour1.png",POSX,POSRETOURY);
+  }
+}
+    
+    
+    
 void souriPos(SDL_Surface *ecran,Axe pos,int numeroMenu)
 {
   if(numeroMenu==1)
@@ -99,12 +140,12 @@ void souriPos(SDL_Surface *ecran,Axe pos,int numeroMenu)
 int attente_evenement_menu(SDL_Surface *ecran, int numeroMenu)
 {    
 
-  bool attente = true;
   SDL_Event evenement;
-  Axe clic,position;
-
+  Axe position;
   SDLKey key_pressed ;
-  while (attente)
+  int posClavier = 0;
+  
+  while (1)
   {
     while ( SDL_PollEvent(&evenement))
     {
@@ -137,24 +178,66 @@ int attente_evenement_menu(SDL_Surface *ecran, int numeroMenu)
 	  }
 	  break;
 	case SDL_KEYDOWN:
-	  key_pressed = evenement.key.keysym.sym; // on récupère la touche
+	  key_pressed = evenement.key.keysym.sym; 
 	  switch (key_pressed)
 	  {
-	  case SDLK_ESCAPE: /* Esc keypress quits the app... */
-	    attente = false;
-	    break;
-	  case SDLK_LEFT:
-	    printf("left +1\n"); // par exemple
-	    break;
-	  case SDLK_RIGHT:
-	    printf("right +1\n"); 
-	    break;
-	  case SDLK_UP:
-	    printf("up +1\n");
-	    break;
-	  case SDLK_DOWN:
-	    printf("down +1\n");
-	    break;
+	    case SDLK_ESCAPE: 
+	      exit(0);
+	      break;
+	    case SDLK_UP:
+	      posClavier--;
+	      if((numeroMenu==1) && (posClavier < 1))
+		posClavier=3;
+	      if((numeroMenu==2) && (posClavier < 1))
+		posClavier=4;
+	      clavierPos(ecran,posClavier,numeroMenu);
+	      break;
+	    case SDLK_DOWN:
+	      posClavier++;
+	      if(((numeroMenu==1) && (posClavier > 3)) || ((numeroMenu==2) && (posClavier > 4)))
+		posClavier=1;
+	      clavierPos(ecran,posClavier,numeroMenu);
+	      break;
+	    case SDLK_KP_ENTER:
+	      if(numeroMenu==1)
+	      {
+		if(posClavier==1)
+		  return JOUER;
+		if(posClavier==2)
+		  return CHARGEMENT;
+		if(posClavier==3)
+		  return QUITTER;
+	      }
+	      else if(numeroMenu==2)
+	      {
+		if(posClavier==1)
+		  return NEWGAME;
+		if(posClavier==4)
+		  return RETOUR;
+	      }
+	      break;
+	      
+	    case SDLK_RETURN:
+	      if(numeroMenu==1)
+	      {
+		if(posClavier==1)
+		  return JOUER;
+		if(posClavier==2)
+		  return CHARGEMENT;
+		if(posClavier==3)
+		  return QUITTER;
+	      }
+	      else if(numeroMenu==2)
+	      {
+		if(posClavier==1)
+		  return NEWGAME;
+		if(posClavier==4)
+		  return RETOUR;
+	      }
+	      break;
+	      
+	    default:
+	      break;
 	  }
 	  break;
 	case SDL_QUIT:
@@ -164,10 +247,10 @@ int attente_evenement_menu(SDL_Surface *ecran, int numeroMenu)
 	  break;
       }
     }
-    // refresh screen
-    // mettre ici tous les blit utiles s'il y a des changements dans les surfaces, board, nouveaux pions
-    SDL_Flip(ecran); //maj des surfaces pour affichage
+    
+    SDL_Flip(ecran); 
   }
+  return QUITTER;
 }
 
 
