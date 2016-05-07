@@ -15,12 +15,14 @@ INCDIR		=	includes/
 SRCBASE		=	gestion_tours.c \
 				save.c \
 				unionfind.c \
-				memory.c
+				memory.c \
+				error.c
 
 INCBASE		=	gestion_tours.h \
 				save.h \
 				unionfind.h \
 				memory.h \
+				error.h \
 				types.h
 
 SRCS		=	$(addprefix $(SRCDIR), $(SRCBASE))
