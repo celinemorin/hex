@@ -1,4 +1,4 @@
-##############################################################################
+/*############################################################################
 ##																			##
 ##																			##	
 ##		module : save.c														##
@@ -8,7 +8,7 @@
 ##		dependances : error.c, memory.c, gestion_tours.c					##
 ##																			##
 ##																			##
-##############################################################################
+############################################################################*/
 
 #include "save.h"
 #include "error.h"
@@ -47,7 +47,7 @@ Infos load_save (void)
 Infos cancel_coup (Infos infos)
 {
 	if (system("sed '$d' historique.txt > tmp.txt && rm historique.txt && mv tmp.txt historique.txt") == -1)
-		error("system cancel_coup", 8)
+		error("system cancel_coup", 8);
 	infos = load_save();
 	return (infos);
 }
