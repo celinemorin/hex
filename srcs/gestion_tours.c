@@ -3,7 +3,6 @@
 ##																			##	
 ##		module : gestion_tours.c											##
 ##																			##
-##		auteur : celine morin												##
 ##																			##
 ##		dependances : unionfind.c											##
 ##																			##

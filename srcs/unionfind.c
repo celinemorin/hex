@@ -3,7 +3,6 @@
 ##																			##	
 ##		module : unionfind.c												##
 ##																			##
-##		auteur : celine morin												##
 ##																			##
 ##		dependances : memory.c												##
 ##																			##

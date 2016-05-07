@@ -3,7 +3,6 @@
 ##																			##	
 ##		module : save.c														##
 ##																			##
-##		auteur : celine morin												##
 ##																			##
 ##		dependances : error.c, memory.c, gestion_tours.c					##
 ##																			##
@@ -15,11 +14,18 @@
 #include "memory.h"
 #include "gestion_tours.h"
 
+/* rôle : supprimer le fichier contenant l'historique. */
+
 void delete_save (void)
 {
 	if (remove("historique.txt") != 0)
 		error("remove delete_save", 5);
 }
+
+/*	rôle : inscris dans un fichier historique.txt le dernier coup joué.
+	int X : abscisse.
+	int Y : ordonnée.
+	State color : couleur du pion. */
 
 void make_save (int X, int Y, State color)
 {
@@ -29,6 +35,9 @@ void make_save (int X, int Y, State color)
 	fprintf(file, "%d %d %d\n", color, X, Y);
 	fclose(file);
 }
+
+/*	rôle : charger une sauvegarde.
+	retour : la structure Infos contenant la partie chargée. */
 
 Infos load_save (void)
 {
@@ -43,6 +52,10 @@ Infos load_save (void)
 	fclose(file);
 	return (infos);
 }
+
+/*	rôle : annuler le dernier coup joué.
+	Infos infos : la structure à modifier.
+	retour : la structure Infos modifiée. */
 
 Infos cancel_coup (Infos infos)
 {
