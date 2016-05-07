@@ -64,16 +64,16 @@ Infos initialisation_infos (void)
 	return (infos);
 }
 
-bool add_adjacent (Infos infos, int X, int Y, State color)
+void add_adjacent (Infos infos, int X1, int Y1, int X2, int Y2, State color)
 {
 	bool valid = true;
-	if (X < 1 || X > 11 || Y < 1 || Y > 11)
-		valid = false;
-	else if (infos->plateau[X][Y] != color)
-		valid = false;
-	//else 
-		// union 
-	return (valid);
+	if (!(X2 < 1 || X2 > 11 || Y2 < 1 || Y2 > 11 || infos->plateau[X2 - 1][Y2 - 1] != color))
+	{
+		if (color == red)
+			uf_union(infos->red_root, get_ID(X1, Y1), get_ID(X2, Y2));
+		else if (color == blue)
+			uf_union(infos->blue_root, get_ID(X1, Y1), get_ID(X2, Y2));
+	} 
 }
 
 void add_pion (Infos infos, int X, int Y, State color)
@@ -85,6 +85,12 @@ void add_pion (Infos infos, int X, int Y, State color)
 		uf_node_add(infos->red_root, X, Y);
 	else if (color == blue)
 		uf_node_add(infos->blue_root, X, Y);
+	add_adjacent(X, Y, X, Y - 1);
+	add_adjacent(X, Y, X + 1, Y - 1);
+	add_adjacent(X, Y, X - 1, Y);
+	add_adjacent(X, Y, X + 1, Y);
+	add_adjacent(X, Y, X - 1, Y + 1);
+	add_adjacent(X, Y, X, X + 1);
 }
 
 bool end_of_game (Infos infos, State color)
@@ -130,5 +136,7 @@ bool end_of_game (Infos infos, State color)
 
 int main (int argc, char **argv)
 {
+	Infos infos = initialisation_infos();
+	
 	return (0);
 }

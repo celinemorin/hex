@@ -25,7 +25,10 @@ void load_save (Infos infos)
 	if (file == NULL)
 		exit(1);
 	while (fscanf(file, "%d %d %d\n", &color, &X, &Y) == 3)
+	{
 		infos->plateau[X - 1][Y - 1] = color;
+		//add_pion
+	}
 	fclose(file);
 }
 

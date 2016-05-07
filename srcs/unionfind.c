@@ -51,7 +51,7 @@ bool nodes_linked (struct uf_node *root, int X1, int Y1, int X2, int Y2)
 	return (link);
 }
 
-void insert_vertex (struct uf_node *root, struct uf_node *temp)
+void insert_ID (struct uf_node *root, struct uf_node *temp)
 {
 	if (temp->ID < root->ID) 
 	{
@@ -87,7 +87,7 @@ struct uf_node *uf_node_create (int X, int Y)
 struct uf_node *uf_node_add (struct uf_node *root, int X, int Y)
 {
 	struct uf_node *temp = uf_node_create(X, Y);
-	insert_vertex(root, temp);
+	insert_ID(root, temp);
 	return (temp);
 }
 
