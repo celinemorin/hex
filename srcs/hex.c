@@ -66,7 +66,6 @@ Infos initialisation_infos (void)
 
 void add_adjacent (Infos infos, int X1, int Y1, int X2, int Y2, State color)
 {
-	bool valid = true;
 	if (!(X2 < 1 || X2 > 11 || Y2 < 1 || Y2 > 11 || infos->plateau[X2 - 1][Y2 - 1] != color))
 	{
 		if (color == red)
@@ -85,29 +84,29 @@ void add_pion (Infos infos, int X, int Y, State color)
 		uf_node_add(infos->red_root, X, Y);
 	else if (color == blue)
 		uf_node_add(infos->blue_root, X, Y);
-	add_adjacent(X, Y, X, Y - 1);
-	add_adjacent(X, Y, X + 1, Y - 1);
-	add_adjacent(X, Y, X - 1, Y);
-	add_adjacent(X, Y, X + 1, Y);
-	add_adjacent(X, Y, X - 1, Y + 1);
-	add_adjacent(X, Y, X, X + 1);
+	add_adjacent(infos, X, Y, X, Y - 1, color);
+	add_adjacent(infos, X, Y, X + 1, Y - 1, color);
+	add_adjacent(infos, X, Y, X - 1, Y, color);
+	add_adjacent(infos, X, Y, X + 1, Y, color);
+	add_adjacent(infos, X, Y, X - 1, Y + 1, color);
+	add_adjacent(infos, X, Y, X, X + 1, color);
 }
 
 bool end_of_game (Infos infos, State color)
 {
-	int i = 0;
+	int j, i = 1;
 	bool end = false;
 	if (color == red)
 	{
-		while (i < SIZE && !end)
+		while (i <= SIZE && !end)
 		{
-			if (infos->plateau[i][SIZE - 1] == red)
+			if (infos->plateau[SIZE - 1][i - 1] == red)
 			{
-				j = 0;
-				while (j < SIZE && !end)
+				j = 1;
+				while (j <= SIZE && !end)
 				{
-					if (infos->plateau[j][0] == red)
-						end = nodes_linked(infos->red_root, i, SIZE - 1, j, 0);
+					if (infos->plateau[0][j - 1] == red)
+						end = nodes_linked(infos->red_root, SIZE, i, 1, j);
 					j++;
 				}
 			}
@@ -116,15 +115,15 @@ bool end_of_game (Infos infos, State color)
 	}
 	else if (color == blue)
 	{
-		while (i < SIZE && !end)
+		while (i <= SIZE && !end)
 		{
-			if (infos->plateau[SIZE - 1][i] == blue)
+			if (infos->plateau[i - 1][SIZE - 1] == blue)
 			{
-				j = 0;
-				while (j < SIZE && !end)
+				j = 1;
+				while (j <= SIZE && !end)
 				{
-					if (infos->plateau[0][j] == blue)
-						end = nodes_linked(infos->blue_root, SIZE - 1, i, 0, j);
+					if (infos->plateau[j - 1][0] == blue)
+						end = nodes_linked(infos->blue_root, i, SIZE, j, 1);
 					j++;
 				}
 			}
@@ -137,6 +136,19 @@ bool end_of_game (Infos infos, State color)
 int main (int argc, char **argv)
 {
 	Infos infos = initialisation_infos();
-	
+	add_pion(infos, 5, 1, blue);
+	add_pion(infos, 5, 2, blue);
+    add_pion(infos, 5, 3, blue);
+	add_pion(infos, 5, 4, blue);
+	add_pion(infos, 5, 5, blue);
+	add_pion(infos, 5, 6, blue);
+	add_pion(infos, 5, 7, blue);
+	add_pion(infos, 5, 8, blue);
+	add_pion(infos, 5, 9, blue);
+	add_pion(infos, 5, 10, blue);
+	add_pion(infos, 5, 11, blue);
+	affichage(infos->plateau);
+	if (end_of_game(infos, blue))
+		printf("OUIIIIII\n");
 	return (0);
 }

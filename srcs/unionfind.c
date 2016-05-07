@@ -58,14 +58,14 @@ void insert_ID (struct uf_node *root, struct uf_node *temp)
 		if (root->left == NULL)
 			root->left = temp;
 		else
-			insert_vertex(root->left, temp);
+			insert_ID(root->left, temp);
 	}
 	else
 	{
 		if (root->right == NULL)
 			root->right = temp;
 		else
-			insert_vertex(root->right, temp);
+			insert_ID(root->right, temp);
 	}
 }
 
