@@ -33,7 +33,8 @@ void free_plateau (Board plateau)
 void free_infos (Infos infos)
 {
 	free_plateau(infos->plateau);
-	destroy_unionfind_node(infos->root);
+	destroy_unionfind_node(infos->red_root);
+	destroy_unionfind_node(infos->blue_root);
 	free(infos);
 }
 
@@ -57,7 +58,8 @@ Board initialisation_plateau (void)
 Infos initialisation_infos (void)
 {
 	Infos infos = malloc(sizeof(struct infos));
-	infos->root = uf_node_create(6, 6);
+	infos->red_root = uf_node_create(SIZE / 2, SIZE / 2);
+	infos->blue_root = uf_node_create(SIZE / 2, SIZE / 2);
 	infos->plateau = initialisation_plateau();
 	return (infos);
 }
@@ -70,7 +72,7 @@ bool add_adjacent (Infos infos, int X, int Y, State color)
 	else if (infos->plateau[X][Y] != color)
 		valid = false;
 	//else 
-		// si l'un ou l'autre n'y sont pas les ajouter + union des deux
+		// union 
 	return (valid);
 }
 
@@ -79,9 +81,52 @@ void add_pion (Infos infos, int X, int Y, State color)
 	if (infos->plateau == NULL || infos->plateau[X - 1][Y - 1] != empty)
 		exit(1);
 	infos->plateau[X - 1][Y - 1] = color;
+	if (color == red)
+		uf_node_add(infos->red_root, X, Y);
+	else if (color == blue)
+		uf_node_add(infos->blue_root, X, Y);
 }
 
-// pour savoir si il y a un gagnant, on check si on a dans un meme chemin un Y = 1 et un Y = 11 pour les rouges, et un X = 1 et un X = 11 pour les bleus
+bool end_of_game (Infos infos, State color)
+{
+	int i = 0;
+	bool end = false;
+	if (color == red)
+	{
+		while (i < SIZE && !end)
+		{
+			if (infos->plateau[i][SIZE - 1] == red)
+			{
+				j = 0;
+				while (j < SIZE && !end)
+				{
+					if (infos->plateau[j][0] == red)
+						end = nodes_linked(infos->red_root, i, SIZE - 1, j, 0);
+					j++;
+				}
+			}
+			i++;
+		}
+	}
+	else if (color == blue)
+	{
+		while (i < SIZE && !end)
+		{
+			if (infos->plateau[SIZE - 1][i] == blue)
+			{
+				j = 0;
+				while (j < SIZE && !end)
+				{
+					if (infos->plateau[0][j] == blue)
+						end = nodes_linked(infos->blue_root, SIZE - 1, i, 0, j);
+					j++;
+				}
+			}
+			i++;
+		}
+	}
+	return (end);
+}
 
 int main (int argc, char **argv)
 {

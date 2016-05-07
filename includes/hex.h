@@ -13,7 +13,8 @@ typedef State **Board;
 typedef struct infos
 {
 	Board plateau;
-	struct uf_node *root;
+	struct uf_node *red_root;
+	struct uf_node *blue_root;
 } infos;
 
 typedef struct infos *Infos;

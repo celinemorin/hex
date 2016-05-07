@@ -16,7 +16,7 @@ static struct uf_node *find_helper (struct uf_node *root, int ID)
 	return (temp);
 }
 
-static struct uf_node *find_node (struct uf_node *root, int ID)
+struct uf_node *find_node (struct uf_node *root, int ID)
 {
 	struct uf_node *temp = find_helper(root, ID);
 	if (temp != NULL)
@@ -30,14 +30,6 @@ static struct uf_node *find_node (struct uf_node *root, int ID)
 	return (temp);
 }
 
-int uf_find (struct uf_node *root, int ID)
-{
-	struct uf_node *group_rep = find_node(root, ID);
-	if (group_rep != NULL)
-		ID = group_rep->ID;
-	return (ID);
-}
-
 int get_ID (int X, int Y)
 {
 	int i, j, ID = 0;
@@ -47,6 +39,16 @@ int get_ID (int X, int Y)
 			ID++;
 	}
 	return (ID);
+}
+
+bool nodes_linked (struct uf_node *root, int X1, int Y1, int X2, int Y2)
+{
+	struct uf_node *a = find_node(root, get_ID(X1, Y1));
+	struct uf_node *b = find_node(root, get_ID(X2, Y2));
+	bool link = false;
+	if (a->group == b->group)
+		link = true;
+	return (link);
 }
 
 void insert_vertex (struct uf_node *root, struct uf_node *temp)
@@ -89,11 +91,10 @@ struct uf_node *uf_node_add (struct uf_node *root, int X, int Y)
 	return (temp);
 }
 
-bool uf_union (struct uf_node *root, int ID1, int ID2)
+void uf_union (struct uf_node *root, int ID1, int ID2)
 {
 	struct uf_node *a = find_node(root, ID1);
 	struct uf_node *b = find_node(root, ID2);
-	bool same_group = false;
 	if (a->group != b->group)
 	{
 		if (a->ID > b->ID)
@@ -101,7 +102,4 @@ bool uf_union (struct uf_node *root, int ID1, int ID2)
 		else
 			b->group = a->group;
 	}
-	else
-		same_group = true;
-	return (same_group);
 }
