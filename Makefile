@@ -12,13 +12,16 @@ OBJDIR		=	objs/
 
 INCDIR		=	includes/
 
-SRCBASE		=	hex.c \
+SRCBASE		=	gestion_tours.c \
 				save.c \
-				unionfind.c
+				unionfind.c \
+				memory.c
 
-INCBASE		=	hex.h \
+INCBASE		=	gestion_tours.h \
 				save.h \
-				unionfind.h
+				unionfind.h \
+				memory.h \
+				types.h
 
 SRCS		=	$(addprefix $(SRCDIR), $(SRCBASE))
 

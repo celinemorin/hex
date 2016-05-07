@@ -1,4 +1,6 @@
 #include "save.h"
+#include "memory.h"
+#include "gestion_tours.h"
 
 void delete_save (void)
 {

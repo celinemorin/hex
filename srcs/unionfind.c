@@ -1,4 +1,5 @@
 #include "unionfind.h"
+#include "memory.h"
 
 static struct uf_node *find_helper (struct uf_node *root, int ID)
 {
@@ -16,7 +17,7 @@ static struct uf_node *find_helper (struct uf_node *root, int ID)
 	return (temp);
 }
 
-struct uf_node *find_node (struct uf_node *root, int ID)
+static struct uf_node *find_node (struct uf_node *root, int ID)
 {
 	struct uf_node *temp = find_helper(root, ID);
 	if (temp != NULL)
@@ -51,7 +52,7 @@ bool nodes_linked (struct uf_node *root, int X1, int Y1, int X2, int Y2)
 	return (link);
 }
 
-void insert_ID (struct uf_node *root, struct uf_node *temp)
+static void insert_ID (struct uf_node *root, struct uf_node *temp)
 {
 	if (temp->ID < root->ID) 
 	{
@@ -67,21 +68,6 @@ void insert_ID (struct uf_node *root, struct uf_node *temp)
 		else
 			insert_ID(root->right, temp);
 	}
-}
-
-struct uf_node *uf_node_create (int X, int Y)
-{
-	struct uf_node *temp = malloc(sizeof(struct uf_node));
-	if (temp == NULL)
-	{
-		fprintf(stderr, "malloc in unionfind.c");
-		exit(1);
-	}
-	temp->left = NULL;
-	temp->right = NULL;
-	temp->ID = get_ID(X, Y);
-	temp->group = temp;
-	return (temp);
 }
 
 struct uf_node *uf_node_add (struct uf_node *root, int X, int Y)

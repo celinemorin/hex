@@ -2,7 +2,7 @@
 #define __SAVE_H__
 
 #include <stdio.h>
-#include "hex.h"
+#include "types.h"
 
 void delete_save (void);
 void make_save (int X, int Y, State color);
