@@ -45,6 +45,7 @@ typedef struct
 
 void chargementUneImage(SDL_Surface *ecran, char * emplacement,int x,int y);
 void initialisationImage(SDL_Surface *ecran, int numeroMenu);
+void clavierPos(SDL_Surface *ecran,int posClavier,int numeroMenu);
 void souriPos(SDL_Surface *ecran,Axe pos,int numeroMenu);
 int attente_evenement_menu(SDL_Surface *ecran, int numeroMenu);
 int creation_interface(SDL_Surface *ecran,int numMenu);
