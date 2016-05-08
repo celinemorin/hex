@@ -70,16 +70,17 @@ int main()
   if(res==5) // si le joueur a choisi humain vs humain
   {
     creation_interface_jeu(ecran,3);
+    unClicValide.y=-1;
     while(gagnant == false)
     {
-      affichageGeneral(ecran,varInfo);
+      affichageGeneral(ecran,varInfo,unClicValide);
       unClicValide = attente_evenement_jeu(ecran,varInfo,tourJoueur);
       if(unClicValide.x==-1)
       {
 	if((premierTour!=true)&&(annulationJ[tourJoueur]==true))
 	{
 	    annulationJ[tourJoueur]=false;
-		free_infos(varInfos);
+	    free_infos(varInfo);
 	    varInfo = cancel_coup(varInfo);
 	    if(tourJoueur==1)
 	      tourJoueur=2;
@@ -93,6 +94,7 @@ int main()
 	if(add_pion(varInfo,unClicValide.x,unClicValide.y,tourJoueur) == true)
 	{
 	  make_save (unClicValide.x,unClicValide.y,tourJoueur);
+	  gagnant=end_of_game (varInfo, tourJoueur);
 	  if(tourJoueur==1)
 	    tourJoueur=2;
 	  else
