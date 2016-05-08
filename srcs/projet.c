@@ -89,9 +89,8 @@ int main()
       else 
       {
 	premierTour=false;
-	if(varInfo->plateau[unClicValide.x-1][unClicValide.y-1] == 0)
+	if(add_pion(varInfo,unClicValide.x,unClicValide.y,tourJoueur) == true)
 	{
-	  add_pion(varInfo,unClicValide.x,unClicValide.y,tourJoueur);
 	  make_save (unClicValide.x,unClicValide.y,tourJoueur);
 	  if(tourJoueur==1)
 	    tourJoueur=2;
