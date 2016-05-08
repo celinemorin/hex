@@ -79,7 +79,8 @@ int main()
 	if((premierTour!=true)&&(annulationJ[tourJoueur]==true))
 	{
 	    annulationJ[tourJoueur]=false;
-	    varInfo = cancel_coup (varInfo);
+		free_infos(varInfos);
+	    varInfo = cancel_coup(varInfo);
 	    if(tourJoueur==1)
 	      tourJoueur=2;
 	    else
