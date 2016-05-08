@@ -68,34 +68,34 @@ bool end_of_game (Infos infos, State color)
 {
 	int j, i = 1;
 	bool end = false;
-	if (color == red)
+	if (color == blue)
 	{
 		while (i <= SIZE && !end)
 		{
-			if (infos->plateau[SIZE - 1][i - 1] == red)
+			if (infos->plateau[SIZE - 1][i - 1] == blue)
 			{
 				j = 1;
 				while (j <= SIZE && !end)
 				{
-					if (infos->plateau[0][j - 1] == red)
-						end = nodes_linked(infos->red_root, SIZE, i, 1, j);
+					if (infos->plateau[0][j - 1] == blue)
+						end = nodes_linked(infos->blue_root, SIZE, i, 1, j);
 					j++;
 				}
 			}
 			i++;
 		}
 	}
-	else if (color == blue)
+	else if (color == red)
 	{
 		while (i <= SIZE && !end)
 		{
-			if (infos->plateau[i - 1][SIZE - 1] == blue)
+			if (infos->plateau[i - 1][SIZE - 1] == red)
 			{
 				j = 1;
 				while (j <= SIZE && !end)
 				{
-					if (infos->plateau[j - 1][0] == blue)
-						end = nodes_linked(infos->blue_root, i, SIZE, j, 1);
+					if (infos->plateau[j - 1][0] == red)
+						end = nodes_linked(infos->red_root, i, SIZE, j, 1);
 					j++;
 				}
 			}
