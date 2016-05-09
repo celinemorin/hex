@@ -1,4 +1,4 @@
-#include "interfaceJeu.h"
+#include "interface.h"
 #include <unistd.h>
 
 Axe recuperationCellule(Axe position)
