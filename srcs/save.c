@@ -67,21 +67,21 @@ Infos cancel_coup (Infos infos)
 
 /*	rôle : renvoie la ième ligne de l'historique en partant de la fin. 
 	int nb : le numéro de la ligne (en partant du bas du fichier).
-	retour : tableau contenant les valeurs du coup demandé : couleur, X, Y. */
+	retour : tableau vide si la ligne n'existe pas, sinon tableau contenant les valeurs du coup demandé : couleur, X, Y. */
 
 int *historique (int nb)
 {
 	int *tab = initialisation_tableau(3);
 	char commande[36];
 	sprintf(commande, "tail -n %d historique.txt > tmp.txt", nb);
-	if (system(commande) == -1)
-		error("system historique", 9);
 	FILE *file = fopen("historique.txt", "r");
 	if (file == NULL)
 		error("fopen historique", 12);
 	if (ftell(file) != 0)
 	{
 		fclose(file);
+		if (system(commande) == -1)
+			error("system historique", 9);
 		file = fopen("tmp.txt", "r");
 		if (file == NULL)
 			error("fopen historique", 10);
