@@ -1,7 +1,7 @@
-#ifndef INTERFACEJEU_H
-#define INTERFACEJEU_H
+#ifndef INTERFACE_H
+#define INTERFACE_H
 
-#include "interface.h"
+#include "menu.h"
 #include "types.h"
 #include "save.h"
 
