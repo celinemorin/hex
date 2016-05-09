@@ -2,7 +2,7 @@ NAME		=	hex
 
 NAMEBASE    =   $(shell basename $(NAME))
 
-CC		=	gcc
+CC			=	gcc
 
 FLAGS		=	-Wall -lSDL -lSDL_image -lSDL_ttf
 
