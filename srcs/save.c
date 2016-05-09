@@ -65,31 +65,16 @@ Infos cancel_coup (Infos infos)
 	return (infos);
 }
 
-/*	rôle : renvoie la ième ligne de l'historique en partant de la fin. 
-	int nb : le numéro de la ligne (en partant du bas du fichier).
-	retour : tableau vide si la ligne n'existe pas, sinon tableau contenant les valeurs du coup demandé : couleur, X, Y. */
-
 int *historique (int nb)
 {
 	int *tab = initialisation_tableau(3);
 	char commande[36];
 	sprintf(commande, "tail -n %d historique.txt > tmp.txt", nb);
-	FILE *file1 = fopen("historique.txt", "r");
-	if (file1 == NULL)
-		error("fopen historique", 12);
-	if (ftell(file1) != 0)
-	{
-		if (system(commande) == -1)
-			error("system historique", 9);
-		FILE *file2 = fopen("tmp.txt", "r");
-		if (file2 == NULL)
-			error("fopen historique", 10);
-		fscanf(file2, "%d %d %d\n", &tab[0], &tab[1], &tab[2]);
-		fclose(file2);
-		if (remove("tmp.txt") != 0)
-			error("remove historique", 11);
-	}
-	fclose(file1);
-	fclose(file2);
+	if (system(commande) == -1)
+		error("system historique", 9);
+	FILE *file = fopen("tmp.txt", "r");
+	if (file == NULL)
+		error("fopen historique", 10);
+	fscanf(file, "%d %d %d\n", &tab[0], &tab[1], &tab[2]);
 	return (tab);
 }
