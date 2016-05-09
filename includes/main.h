@@ -1,8 +1,8 @@
-#ifndef PROJET_H
-#define PROJET_H
+#ifndef MAIN_H
+#define MAIN_H
 
+#include "menu.h"
 #include "interface.h"
-#include "interfaceJeu.h"
 #include "types.h"
 #include "gestion_tours.h"
 #include "memory.h"
