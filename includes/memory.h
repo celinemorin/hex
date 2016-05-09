@@ -7,6 +7,8 @@
 
 #define SIZE 11
 
+
+int *initialisation_tableau (int size);
 Board initialisation_plateau (void);
 struct uf_node *uf_node_create (int X, int Y);
 Infos initialisation_infos (void);

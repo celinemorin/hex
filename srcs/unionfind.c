@@ -36,7 +36,7 @@ static struct uf_node *find_helper (struct uf_node *root, int ID)
 /* 	rôle : trouver la node contenant l'ID donné en paramètre, puis trouver la node du représentant de son groupe.
 	struct uf_node *root : racine de l'arbre où rechercher la node.
 	int ID : ID à trouver.
-	retour : la node représentatrice du groupe de la node ID si celle-ci est trouvée, NULL sinon.. */
+	retour : la node représentatrice du groupe de la node ID si celle-ci est trouvée, NULL sinon. */
 
 static struct uf_node *find_node (struct uf_node *root, int ID)
 {

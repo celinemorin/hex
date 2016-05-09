@@ -64,3 +64,17 @@ Infos cancel_coup (Infos infos)
 	infos = load_save();
 	return (infos);
 }
+
+int *historique (int nb)
+{
+	int tab = initialisation_tableau(3);
+	char commande = initialisation_tableau(35);
+	sprintf(commande, "tail -n %d historique.txt > tmp.txt", nb);
+	if (system(commande) == -1)
+		error("system historique", 9);
+	FILE *file = fopen("tmp.txt", "r");
+	if (file == NULL)
+		error("fopen historique", 10);
+	fscanf(file, "%d %d %d\n", &tab[0], &tab[1], &tab[2]);
+	return (tab);
+}

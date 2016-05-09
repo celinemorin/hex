@@ -13,6 +13,14 @@
 #include "unionfind.h"
 #include "error.h"
 
+int *initialisation_tableau (int size)
+{
+	int *tab = malloc(sizeof(int) * size + 1);
+	if (tab == NULL)
+		error("malloc initialisation_tableau", -1);
+	return (tab);
+}
+
 /* 	rôle : initialiser le plateau de jeu.
 	retour : plateau initialisé. */
 

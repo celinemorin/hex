@@ -4,7 +4,7 @@ NAMEBASE    =   $(shell basename $(NAME))
 
 CC		=	gcc
 
-FLAGS		=	-Wall
+FLAGS		=	-Wall -lSDL -lSDL_image -lSDL_ttf
 
 SRCDIR		=	srcs/
 
@@ -16,14 +16,20 @@ SRCBASE		=	gestion_tours.c \
 				save.c \
 				unionfind.c \
 				memory.c \
-				error.c
+				error.c \
+				menu.c \
+				interface.c \
+				main.c
 
 INCBASE		=	gestion_tours.h \
 				save.h \
 				unionfind.h \
 				memory.h \
 				error.h \
-				types.h
+				types.h \
+				menu.h \
+				interface.h \
+				main.h
 
 SRCS		=	$(addprefix $(SRCDIR), $(SRCBASE))
 
