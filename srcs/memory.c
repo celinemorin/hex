@@ -13,6 +13,10 @@
 #include "unionfind.h"
 #include "error.h"
 
+/*	rôle : initialisation d'un tableau d'int.
+	int size : la taille du tableau demandé.
+	retour : le tableau d'int initialisé. */
+
 int *initialisation_tableau (int size)
 {
 	int *tab = malloc(sizeof(int) * size + 1);

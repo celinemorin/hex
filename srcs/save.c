@@ -65,7 +65,9 @@ Infos cancel_coup (Infos infos)
 	return (infos);
 }
 
-/*	rôle : renvoie la ième ligne de l'historique en partant de la fin. */
+/*	rôle : renvoie la ième ligne de l'historique en partant de la fin. 
+	int nb : le numéro de la ligne (en partant du bas du fichier).
+	retour : tableau contenant les valeurs du coup demandé : couleur, X, Y. */
 
 int *historique (int nb)
 {
@@ -77,7 +79,7 @@ int *historique (int nb)
 	FILE *file = fopen("tmp.txt", "r");
 	if (file == NULL)
 		error("fopen historique", 10);
-	fscanf(file, "%d %d %d\n", tab[0], tab[1], tab[2]);
+	fscanf(file, "%d %d %d\n", &tab[0], &tab[1], &tab[2]);
 	if (remove("tmp.txt") != 0)
 		error("remove historique", 11);
 	return (tab);
