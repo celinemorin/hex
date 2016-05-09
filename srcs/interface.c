@@ -1,150 +1,198 @@
-#include "interface.h"
+#include "interfaceJeu.h"
+#include <unistd.h>
 
-
-
-void chargementUneImage(SDL_Surface *ecran, char * emplacement,int x,int y)
+Axe recuperationCellule(Axe position)
 {
-  /* Déclaration des variables */
-  SDL_Surface *image;
-  SDL_Rect posBoard; 
+  Axe posRes;
   
-  /* On ajouter l'image */
-  image = IMG_Load(emplacement);                     
-  posBoard.x = x;
-  posBoard.y = y;
-  SDL_BlitSurface(image,NULL,ecran,&posBoard);
+  // On enlève le nombre de pixel ajouté par le placement de l'image + 19 pixel ajouté par l'image
+  posRes.y = (position.y - 19 - POSJEUY);
   
-  /* On free la surface */
-  SDL_FreeSurface(image);  
+  // On enlève le nombre de pixel ajouté par le placement de l'image + 19 pixel ajouté par l'image + le décalage de chaque Y
+  posRes.x=(position.x - 150 - 19 - (15 * (posRes.y/25)));
+  
+  // Si le curseur se trouve dans le petit rectangle du haut du carré il faut calculer si il est a sa place ou pas
+  if(posRes.y%25<6)
+  {
+    // Si on est dans le petit triangle de droite on réduit y de y (donc on enlève 25)
+    if(posRes.x%30 < 13-(posRes.y%25)*2)
+    {
+      posRes.y=posRes.y - 25;
+    }
+    // Si on est dans le petit triangle de gauche ça réduit x de 1 (donc on enlève 30) et y de 1 (donc on enlève 25)
+    if(posRes.x%30 > 15+(posRes.y%25)*2)
+    {
+      posRes.x=posRes.x+30;
+      posRes.y=posRes.y-25;
+    }
+    // Si c'est plus petit que 0 et qu'on le divise on aura 0 mais on veut -1 donc on enlève 25
+    else
+    {
+      if(posRes.x < 0)
+	posRes.x=posRes.x-30;
+    }
+  }
+  // Si c'est plus petit que 0 et qu'on le divise on aura 0 mais on veut -1 donc on enlève 25
+  else
+  {
+    if(posRes.x < 0)
+      posRes.x=posRes.x-30;
+  } 
+  
+  // Si c'est plus petit que 0 et qu'on le divise on aura 0 mais on veut -1 donc on enlève 25
+  if(posRes.y<0)
+    posRes.y=posRes.y-25;
+  
+  // On divise par 30 ou 25 et on ajoute 1 pour avoir des cases comprises entre 1 et 11
+  posRes.x=(posRes.x/30)+1;
+  posRes.y=(posRes.y/25)+1;
+
+  return posRes;
 }
 
-void initialisationImage(SDL_Surface *ecran, int numeroMenu)
+void placement_pion(SDL_Surface *ecran, Axe position, int couleur)
 {
-  /* On s'occupe du titre */ 
+  position.x = (position.x * 30) + POSX + 39 + ((position.y - 1)*15);
+  position.y = (position.y * 25) + POSJEUY -6 ;
+  if((couleur == 0) || (couleur == 1) || (couleur == 2))
+    chargementUneImage(ecran,"Images/HexaGris.png",position.x,position.y);
+  if(couleur == 1)
+  {
+    position.x=position.x+4;
+    position.y=position.y+5;
+    chargementUneImage(ecran,"Images/button-red22.png",position.x,position.y);
+  }
+  if(couleur == 2)
+  {
+    position.x=position.x+4;
+    position.y=position.y+5;
+    chargementUneImage(ecran,"Images/button-blue22.png",position.x,position.y);
+  }
+  if(couleur == 3)
+    chargementUneImage(ecran,"Images/HexaJaune.png",position.x,position.y);
+    
+}
+
+void affichageGeneral(SDL_Surface *ecran, Infos varInfo)
+{
+  int i,j;
+  Axe caseEnCours;
+  for(i=0;i<11;i++)
+  {
+    caseEnCours.x=i+1;
+    for(j=0;j<11;j++)
+    {
+      caseEnCours.y=j+1;
+      placement_pion(ecran,caseEnCours,varInfo->plateau[i][j]);
+    }
+  }
+
+  chargementUneImage(ecran,"Images/Gris.png",0,480);
+  chargementUneImage(ecran,"Images/Gris.png",100,480);
   TTF_Init();
   SDL_Rect posTexte;
   SDL_Surface *texte;
-  
-  TTF_Font *policeTexte = TTF_OpenFont("Font/Orange.ttf",120);
+
+  TTF_Font *policeTexte = TTF_OpenFont("Font/Arvo-Regular.ttf",20);
   SDL_Color couleurTexte = {255,255,255};
-  texte = TTF_RenderText_Blended(policeTexte,"Jeu du Hex",couleurTexte);
+  int *tab = historique (1);
 
-  posTexte.x = 130;
-  posTexte.y = 35;
-
-  SDL_BlitSurface(texte,NULL,ecran,&posTexte);
-
-  if(numeroMenu == 1)
+  if((tab[0]<3) && (tab[0]>0))
   {
-    chargementUneImage(ecran,"Images/MenuJouer1.png",POSX,POSJOUERY);
-    chargementUneImage(ecran,"Images/MenuChargement1.png",POSX,POSCHARGY);
-    chargementUneImage(ecran,"Images/MenuQuitter1.png",POSX,POSQUITY);
+    char leTexte[50]="Dernier coup joue : ";
+  
+    char inter[5];
+    sprintf(inter,"%d",tab[1]);
+    strcat(leTexte,inter);
+    strcat(leTexte," ; ");
+    sprintf(inter,"%d",tab[2]);
+    strcat(leTexte,inter);
+
+    texte = TTF_RenderText_Blended(policeTexte,leTexte,couleurTexte);
+
+    posTexte.x = 10;
+    posTexte.y = 480;
+
+    SDL_BlitSurface(texte,NULL,ecran,&posTexte);
   }
-  else if(numeroMenu == 2)
+
+}
+
+void interfaceHistorique(SDL_Surface *ecran, Infos varInfo)
+{  
+  int *tab = historique (1);
+  if((tab[0]<3) && (tab[0]>0))
   {
-    chargementUneImage(ecran,"Images/MenuHumainVsHumain1.png",POSX,POSHVHY);
-    chargementUneImage(ecran,"Images/MenuHumainVsIA1.png",POSX,POSHV1Y);
-    chargementUneImage(ecran,"Images/MenuHumainVsIA3.png",POSX,POSHV2Y);
-    chargementUneImage(ecran,"Images/MenuRetour1.png",POSX,POSRETOURY);
-  }
-  else if(numeroMenu == 3)
-  {
-    chargementUneImage(ecran,"Images/Annuler3.png",50,500);
-    chargementUneImage(ecran,"Images/Historique3.png",350,505);
-    chargementUneImage(ecran,"Images/hex.png",POSX+50,POSJEUY);
+    TTF_Init();
+    SDL_Rect posTexte;
+    SDL_Surface *texte;
+    
+    TTF_Font *policeTexte = TTF_OpenFont("Font/Arvo-Regular.ttf",20);
+    SDL_Color couleurTexte = {255,255,255};
+    int i;
+    char leTexte[50];
+    char inter[5];
+    
+    strcpy(leTexte,"Historique : ");
+    posTexte.x = 10;
+    posTexte.y = 300;
+    texte = TTF_RenderText_Blended(policeTexte,leTexte,couleurTexte);
+    SDL_BlitSurface(texte,NULL,ecran,&posTexte);
+    chargementUneImage(ecran,"Images/Gris.png",0,320);
+    chargementUneImage(ecran,"Images/Gris.png",0,380);
+    chargementUneImage(ecran,"Images/Gris.png",0,420);
+    
+    
+    for(i=1;i<6;i++)
+    {
+      strcpy(leTexte,"");
+      tab = historique (i);
+      snprintf(inter,sizeof(inter),"%d",tab[1]);
+      strcat(leTexte,inter);
+      strcat(leTexte," ; ");
+      snprintf(inter,sizeof(inter),"%d",tab[2]);
+      strcat(leTexte,inter);
+
+      posTexte.x = 10;
+      posTexte.y = (i*25)+300;
+      texte = TTF_RenderText_Blended(policeTexte,leTexte,couleurTexte);
+      SDL_BlitSurface(texte,NULL,ecran,&posTexte);
+   
+    }
   }
   
-  SDL_FreeSurface(texte);
-  TTF_CloseFont(policeTexte);
 }
 
-void clavierPos(SDL_Surface *ecran,int posClavier,int numeroMenu)
+Axe allerSuivante(SDL_Surface *ecran, int joueur,Infos varInfo)
 {
-  if(numeroMenu==1)
+  
+  Axe casePrec;
+  
+ 
+  casePrec.x=1;
+  casePrec.y=1;
+  while(varInfo->plateau[casePrec.x-1][casePrec.y-1] !=0)
   {
-    if(posClavier==1)
-      chargementUneImage(ecran,"Images/MenuJouer2.png",POSX,POSJOUERY);
-    else
-      chargementUneImage(ecran,"Images/MenuJouer1.png",POSX,POSJOUERY);
-    if(posClavier==2)
-      chargementUneImage(ecran,"Images/MenuChargement2.png",POSX,POSCHARGY);
-    else
-      chargementUneImage(ecran,"Images/MenuChargement1.png",POSX,POSCHARGY);
-    if(posClavier==3)
-      chargementUneImage(ecran,"Images/MenuQuitter2.png",POSX,POSQUITY);
-    else
-      chargementUneImage(ecran,"Images/MenuQuitter1.png",POSX,POSQUITY);
+    casePrec.x++;
+    if(casePrec.x >11)
+    {
+      casePrec.x=1;
+      casePrec.y++;
+    }
   }
-  if(numeroMenu==2)
-  {
-    if(posClavier==1)
-      chargementUneImage(ecran,"Images/MenuHumainVsHumain2.png",POSX,POSHVHY);
-    else
-      chargementUneImage(ecran,"Images/MenuHumainVsHumain1.png",POSX,POSHVHY);
-    if(posClavier==2)
-      chargementUneImage(ecran,"Images/MenuHumainVsIA2.png",POSX,POSHV1Y);
-    else
-      chargementUneImage(ecran,"Images/MenuHumainVsIA1.png",POSX,POSHV1Y);
-    if(posClavier==3)
-      chargementUneImage(ecran,"Images/MenuHumainVsIA4.png",POSX,POSHV2Y);
-    else
-      chargementUneImage(ecran,"Images/MenuHumainVsIA3.png",POSX,POSHV2Y);
-    if(posClavier==4)
-      chargementUneImage(ecran,"Images/MenuRetour2.png",POSX,POSRETOURY);
-    else
-      chargementUneImage(ecran,"Images/MenuRetour1.png",POSX,POSRETOURY);
-  }
-}
-    
-    
-    
-void souriPos(SDL_Surface *ecran,Axe pos,int numeroMenu)
-{
-  if(numeroMenu==1)
-  {
-    if((pos.x > 310) && (pos.x < 490) && (pos.y >230) && (pos.y< 280))
-      chargementUneImage(ecran,"Images/MenuJouer2.png",POSX,POSJOUERY);
-    else
-      chargementUneImage(ecran,"Images/MenuJouer1.png",POSX,POSJOUERY);
-    if((pos.x > 210) && (pos.x < 560) && (pos.y >320) && (pos.y< 370))
-      chargementUneImage(ecran,"Images/MenuChargement2.png",POSX,POSCHARGY);
-    else
-      chargementUneImage(ecran,"Images/MenuChargement1.png",POSX,POSCHARGY);
-    if((pos.x > 290) && (pos.x < 480) && (pos.y >480) && (pos.y< 530))
-      chargementUneImage(ecran,"Images/MenuQuitter2.png",POSX,POSQUITY);
-    else
-      chargementUneImage(ecran,"Images/MenuQuitter1.png",POSX,POSQUITY);
-  }
-  if(numeroMenu==2)
-  {
-    if((pos.x > 140) && (pos.x < 660) && (pos.y >220) && (pos.y< 280))
-      chargementUneImage(ecran,"Images/MenuHumainVsHumain2.png",POSX,POSHVHY);
-    else
-      chargementUneImage(ecran,"Images/MenuHumainVsHumain1.png",POSX,POSHVHY);
-    if((pos.x > 180) && (pos.x < 620) && (pos.y >330) && (pos.y< 380))
-      chargementUneImage(ecran,"Images/MenuHumainVsIA2.png",POSX,POSHV1Y);
-    else
-      chargementUneImage(ecran,"Images/MenuHumainVsIA1.png",POSX,POSHV1Y);
-    if((pos.x > 180) && (pos.x < 620) && (pos.y >430) && (pos.y< 480))
-      chargementUneImage(ecran,"Images/MenuHumainVsIA4.png",POSX,POSHV2Y);
-    else
-      chargementUneImage(ecran,"Images/MenuHumainVsIA3.png",POSX,POSHV2Y);
-    if((pos.x > 300) && (pos.x < 510) && (pos.y >520) && (pos.y< 580))
-      chargementUneImage(ecran,"Images/MenuRetour2.png",POSX,POSRETOURY);
-    else
-      chargementUneImage(ecran,"Images/MenuRetour1.png",POSX,POSRETOURY);
-  }
+  placement_pion(ecran,casePrec, joueur );
+
+  return casePrec; 
 }
 
-
-int attente_evenement_menu(SDL_Surface *ecran, int numeroMenu)
+Axe attente_evenement_jeu(SDL_Surface *ecran, Infos varInfo, int joueur)
 {    
 
-  SDL_Event evenement;
-  Axe position;
+  SDL_Event evenement; 
+  Axe clic,position,casePrecedente;
+  casePrecedente.x=0;
+  casePrecedente.y=0;
   SDLKey key_pressed ;
-  int posClavier = 0;
-  
   while (1)
   {
     while ( SDL_PollEvent(&evenement))
@@ -154,125 +202,150 @@ int attente_evenement_menu(SDL_Surface *ecran, int numeroMenu)
 	case SDL_MOUSEMOTION:
 	  position.x = evenement.motion.x;
 	  position.y = evenement.motion.y;
-	  souriPos(ecran,position,numeroMenu);
+	  if((position.x >270) && (position.x <440) && (position.y>535) && (position.y<570))
+	    chargementUneImage(ecran,"Images/Annuler4.png",50,500);
+	  else
+	    chargementUneImage(ecran,"Images/Annuler3.png",50,500);
+	  if((position.x >540) && (position.x <760) && (position.y>535) && (position.y<570))
+	    chargementUneImage(ecran,"Images/Historique4.png",350,505);
+	  else
+	    chargementUneImage(ecran,"Images/Historique3.png",350,505);
+	    
+	  position = recuperationCellule(position);
+	  if((position.x > 0) && (position.x < 12) && (position.y > 0) && (position.y < 12) && (varInfo->plateau[position.x-1][position.y-1] == 0))
+	  {
+	    placement_pion(ecran,casePrecedente,0);
+	    casePrecedente.x=position.x;
+	    casePrecedente.y=position.y;
+	    placement_pion(ecran,position, joueur );
+	  }
 	  break;
 	case SDL_MOUSEBUTTONDOWN:
 	  if (evenement.button.button == SDL_BUTTON_LEFT)
-	  {
-	    if(numeroMenu==1)
+	  {   
+	    clic.x = evenement.motion.x;
+	    clic.y = evenement.motion.y;
+	    if((clic.x >270) && (clic.x <440) && (clic.y>535) && (clic.y<570))
 	    {
-	      if((evenement.motion.x > 310) && (evenement.motion.x < 490) && (evenement.motion.y >230) && (evenement.motion.y< 280))
-		return JOUER;
-	      if((evenement.motion.x > 210) && (evenement.motion.x < 560) && (evenement.motion.y >320) && (evenement.motion.y< 370))
-		return CHARGEMENT;
-	      if((evenement.motion.x > 290) && (evenement.motion.x < 480) && (evenement.motion.y >480) && (evenement.motion.y< 530))
-		return QUITTER;
+	      clic.x=-1;
+	      return clic;
 	    }
-	    else if(numeroMenu==2)
+	    if((clic.x >540) && (clic.x <760) && (clic.y>535) && (clic.y<570))
 	    {
-	      if((evenement.motion.x > 140) && (evenement.motion.x < 660) && (evenement.motion.y >220) && (evenement.motion.y< 280))
-		return NEWGAME;
-	      if((evenement.motion.x > 300) && (evenement.motion.x < 510) && (evenement.motion.y >520) && (evenement.motion.y< 580))
-		return RETOUR;
+	      interfaceHistorique(ecran,varInfo);
 	    }
+	    else
+	    {
+	      chargementUneImage(ecran,"Images/Gris.png",0,300);
+	      chargementUneImage(ecran,"Images/Gris.png",0,350);
+	      chargementUneImage(ecran,"Images/Gris.png",0,400);
+	    }
+	    //if((clic.x >540) && (clic.x <760) && (clic.y>535) && (clic.y<570))
+	    clic = recuperationCellule(clic);
+	    if((clic.x > 0) && (clic.x < 12) && (clic.y > 0) && (clic.y < 12))
+	      return clic;
 	  }
 	  break;
 	case SDL_KEYDOWN:
-	  key_pressed = evenement.key.keysym.sym; 
+	  key_pressed = evenement.key.keysym.sym; // on récupère la touche
 	  switch (key_pressed)
 	  {
-	    case SDLK_ESCAPE: 
+	    case SDLK_ESCAPE: /* Esc keypress quits the app... */
 	      exit(0);
 	      break;
+	    case SDLK_LEFT:
+	      if((casePrecedente.x ==0) &&(casePrecedente.y==0))
+		casePrecedente= allerSuivante(ecran,joueur,varInfo);
+	      else
+	      {
+		placement_pion(ecran,casePrecedente, 0 );
+		do
+		{
+		  casePrecedente.x--;
+		  if(casePrecedente.x <1)
+		    casePrecedente.x=11;
+		}while(varInfo->plateau[casePrecedente.x-1][casePrecedente.y-1] !=0);
+		placement_pion(ecran,casePrecedente, joueur );
+	      }
+	      break;
+	    case SDLK_RIGHT:
+	      if((casePrecedente.x ==0) &&(casePrecedente.y==0))
+		casePrecedente= allerSuivante(ecran,joueur,varInfo);
+	      else
+	      {
+		placement_pion(ecran,casePrecedente, 0 );
+		do
+		{
+		  casePrecedente.x++;
+		  if(casePrecedente.x >11)
+		    casePrecedente.x=1;
+		}while(varInfo->plateau[casePrecedente.x-1][casePrecedente.y-1] !=0);
+		placement_pion(ecran,casePrecedente, joueur );
+	      }
+	      break;
 	    case SDLK_UP:
-	      posClavier--;
-	      if((numeroMenu==1) && (posClavier < 1))
-		posClavier=3;
-	      if((numeroMenu==2) && (posClavier < 1))
-		posClavier=4;
-	      clavierPos(ecran,posClavier,numeroMenu);
+	      if((casePrecedente.x ==0) &&(casePrecedente.y==0))
+		casePrecedente= allerSuivante(ecran,joueur,varInfo);
+	      else
+	      {
+		placement_pion(ecran,casePrecedente, 0 );
+		do
+		{
+		  casePrecedente.y--;
+		  if(casePrecedente.y <1)
+		    casePrecedente.y=11;
+		}while(varInfo->plateau[casePrecedente.x-1][casePrecedente.y-1] !=0);
+		placement_pion(ecran,casePrecedente, joueur );
+	      }
 	      break;
 	    case SDLK_DOWN:
-	      posClavier++;
-	      if(((numeroMenu==1) && (posClavier > 3)) || ((numeroMenu==2) && (posClavier > 4)))
-		posClavier=1;
-	      clavierPos(ecran,posClavier,numeroMenu);
-	      break;
-	    case SDLK_KP_ENTER:
-	      if(numeroMenu==1)
+	      if((casePrecedente.x ==0) &&(casePrecedente.y==0))
+		casePrecedente= allerSuivante(ecran,joueur,varInfo);
+	      else
 	      {
-		if(posClavier==1)
-		  return JOUER;
-		if(posClavier==2)
-		  return CHARGEMENT;
-		if(posClavier==3)
-		  return QUITTER;
-	      }
-	      else if(numeroMenu==2)
-	      {
-		if(posClavier==1)
-		  return NEWGAME;
-		if(posClavier==4)
-		  return RETOUR;
+		placement_pion(ecran,casePrecedente, 0 );
+		do
+		{
+		  casePrecedente.y++;
+		  if(casePrecedente.y <1)
+		    casePrecedente.y=11;
+		}while(varInfo->plateau[casePrecedente.x-1][casePrecedente.y-1] !=0);
+		placement_pion(ecran,casePrecedente, joueur );
 	      }
 	      break;
-	      
-	    case SDLK_RETURN:
-	      if(numeroMenu==1)
-	      {
-		if(posClavier==1)
-		  return JOUER;
-		if(posClavier==2)
-		  return CHARGEMENT;
-		if(posClavier==3)
-		  return QUITTER;
-	      }
-	      else if(numeroMenu==2)
-	      {
-		if(posClavier==1)
-		  return NEWGAME;
-		if(posClavier==4)
-		  return RETOUR;
-	      }
-	      break;
-	      
 	    default:
 	      break;
+	    case SDLK_RETURN:
+	      if((casePrecedente.x!=0) &&(casePrecedente.y!=0))
+		return casePrecedente;
+	    case SDLK_KP_ENTER:
+	      if((casePrecedente.x!=0) &&(casePrecedente.y!=0))
+		return casePrecedente;
 	  }
 	  break;
 	case SDL_QUIT:
-	  exit(1);
+	  exit(0);
 	  break;
 	default:
 	  break;
       }
     }
-    
     SDL_Flip(ecran); 
   }
-  return QUITTER;
+  return clic;
 }
 
-
-int creation_interface(SDL_Surface *ecran,int numMenu)
+void creation_interface_jeu(SDL_Surface *ecran,int numMenu)
 {
- 
+  
+
+  Uint32 grey = SDL_MapRGB(ecran->format,173,173,173); // c'est du gris
+  SDL_FillRect(ecran,NULL,grey); // de la couleur dans le fond de la fenêtre principale
+
+  
   initialisationImage(ecran,numMenu);
-  int res = attente_evenement_menu(ecran,numMenu);
 
 
   /* Free SDL library */
   SDL_FreeSurface(ecran);
-
-  return(res);
 }
-
-/*
-int main()
-{
-  creation();
-}
-*/
-
-
-
