@@ -89,8 +89,8 @@ int *historique (int nb)
 		fclose(file);
 		if (remove("tmp.txt") != 0)
 			error("remove historique", 11);
-		return (tab);
 	}
-	fclose(file);
-	return (NULL);
+	else
+		fclose(file);
+	return (tab);
 }

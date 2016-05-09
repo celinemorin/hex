@@ -19,9 +19,12 @@
 
 int *initialisation_tableau (int size)
 {
+	int i;
 	int *tab = malloc(sizeof(int) * size + 1);
 	if (tab == NULL)
 		error("malloc initialisation_tableau", -1);
+	for (i = 0 ; i < size ; i++)
+		tab[i] = 0;
 	return (tab);
 }
 
