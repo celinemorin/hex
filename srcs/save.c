@@ -14,14 +14,6 @@
 #include "memory.h"
 #include "gestion_tours.h"
 
-/* rôle : supprimer le fichier contenant l'historique. */
-
-void delete_save (void)
-{
-	if (remove("historique.txt") != 0)
-		error("remove delete_save", 5);
-}
-
 /*	rôle : inscris dans un fichier historique.txt le dernier coup joué.
 	int X : abscisse.
 	int Y : ordonnée.
@@ -64,6 +56,10 @@ Infos cancel_coup (Infos infos)
 	infos = load_save();
 	return (infos);
 }
+
+/*	rôle : renvoie la ième ligne de l'historique en partant de la fin.
+	int nb : le numéro de la ligne recherchée (toujours en partant du bas).
+	retour : les données trouvées dans le fichier. */
 
 int *historique (int nb)
 {

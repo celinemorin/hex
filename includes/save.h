@@ -5,7 +5,6 @@
 #include <string.h>
 #include "types.h"
 
-void delete_save (void);
 void make_save (int X, int Y, State color);
 Infos load_save (void);
 Infos cancel_coup (Infos infos);
