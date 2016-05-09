@@ -1,4 +1,4 @@
-#include "projet.h"
+#include "main.h"
  
 #define HAUTEUR 600 
 #define LARGEUR 800 
@@ -59,6 +59,12 @@ int main()
   if(res==2)
   {
     varInfo=load_save();
+    int *tab = historique (1);
+    tourJoueur=tab[0];
+    if(tourJoueur==1)
+      tourJoueur=2;
+    else
+      tourJoueur=1;
     res=5;
   }
   else
