@@ -76,11 +76,21 @@ int *historique (int nb)
 	sprintf(commande, "tail -n %d historique.txt > tmp.txt", nb);
 	if (system(commande) == -1)
 		error("system historique", 9);
-	FILE *file = fopen("tmp.txt", "r");
+	FILE *file = fopen("historique.txt", "r");
 	if (file == NULL)
-		error("fopen historique", 10);
-	fscanf(file, "%d %d %d\n", &tab[0], &tab[1], &tab[2]);
-	if (remove("tmp.txt") != 0)
-		error("remove historique", 11);
-	return (tab);
+		error("fopen historique", 12);
+	if (ftell(file) != 0)
+	{
+		fclose(file);
+		file = fopen("tmp.txt", "r");
+		if (file == NULL)
+			error("fopen historique", 10);
+		fscanf(file, "%d %d %d\n", &tab[0], &tab[1], &tab[2]);
+		fclose(file);
+		if (remove("tmp.txt") != 0)
+			error("remove historique", 11);
+		return (tab);
+	}
+	fclose(file);
+	return (NULL);
 }
