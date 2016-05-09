@@ -136,11 +136,14 @@ void interfaceHistorique(SDL_Surface *ecran, Infos varInfo)
     strcpy(leTexte,"Historique : ");
     posTexte.x = 10;
     posTexte.y = 300;
+    Axe dernierCoup;
     texte = TTF_RenderText_Blended(policeTexte,leTexte,couleurTexte);
     SDL_BlitSurface(texte,NULL,ecran,&posTexte);
     chargementUneImage(ecran,"Images/Gris.png",0,320);
     chargementUneImage(ecran,"Images/Gris.png",0,380);
     chargementUneImage(ecran,"Images/Gris.png",0,420);
+    dernierCoup.x=0;
+    dernierCoup.y=0;
     
     
     for(i=1;i<6;i++)
@@ -152,11 +155,15 @@ void interfaceHistorique(SDL_Surface *ecran, Infos varInfo)
       strcat(leTexte," ; ");
       snprintf(inter,sizeof(inter),"%d",tab[2]);
       strcat(leTexte,inter);
-
-      posTexte.x = 10;
-      posTexte.y = (i*25)+300;
-      texte = TTF_RenderText_Blended(policeTexte,leTexte,couleurTexte);
-      SDL_BlitSurface(texte,NULL,ecran,&posTexte);
+      if((dernierCoup.x!=tab[1]) || (dernierCoup.y!=tab[2]))
+      {
+	posTexte.x = 10;
+	posTexte.y = (i*25)+300;
+	texte = TTF_RenderText_Blended(policeTexte,leTexte,couleurTexte);
+	SDL_BlitSurface(texte,NULL,ecran,&posTexte);
+	dernierCoup.x=tab[1];
+	dernierCoup.y=tab[2];
+      }
    
     }
   }
