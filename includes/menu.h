@@ -1,5 +1,5 @@
-#ifndef INTERFACE_H
-#define INTERFACE_H
+#ifndef MENU_H
+#define MENU_H
 
 #define HAUTEUR 600 
 #define LARGEUR 800  
